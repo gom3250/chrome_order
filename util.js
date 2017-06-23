@@ -8,7 +8,7 @@ function login(username, password,  callback){
       success: function(data, status, xhr) {
         chrome.cookies.get({"url": "http://dc.wk2.com/Home/User/login.html", "name": cookieId}, function(cookie) {
              var cookieStr = cookieId + "=" + cookie.value;
-             callback(cookieStr)
+             callback(cookieStr);
         });
       },
       cache: false
@@ -16,10 +16,10 @@ function login(username, password,  callback){
 }
 
 function view(username, success, show){
-  var username = "张凯",
-      password = "123456";
+  var loginusername = "张凯";
+  var password = "123456";
 
-  login(username, password, function(cookieStr){
+  login(loginusername, password, function(cookieStr){
     $.ajax({
         type: 'GET',
         url: "http://dc.wk2.com/Home/Index/index.html",
@@ -51,7 +51,7 @@ function order(username, bumen, o_type, cookieStr, success){
       success: function(data, status, xhr) {
          view(username, function(data){
               saveObject({"success": o_type}, function(){
-                    success(username, o_type)
+                    success(username, o_type);
               });
          });
       },
@@ -83,7 +83,7 @@ function isWeekDay(){
 function checkHour(hour) {
     var date = new Date();
     var h = date.getHours();
-    var m = date.getMinutes()
+    var m = date.getMinutes();
 
     if(hour == h){
       return true;
@@ -99,11 +99,10 @@ function noon(){
 
 function noon2(callback, ggcallback){
    if(checkHour('09') || checkHour('9')){
-
-     getValue(["success", "fanfou"], function(result){
+     getValue(["success"], function(result){
         if(result.success != 1){
           order2(2, function(username, o_type){
-            notification("noon", "点餐提示", username + "：已为您点好午餐.");
+              notification("noon", "点餐提示", username + "：已为您点好午餐.");
           });
         } else {
           if(callback){
@@ -130,7 +129,7 @@ function night2(callback, ggcallback){
               callback();
           }
         }
-     })
+     });
    } else {
      if(ggcallback){
          ggcallback();
@@ -155,6 +154,7 @@ function offwork(){
           }
      });
    }
+   console.log("offwork run");
 }
 
 function saveObject(obj, callback){

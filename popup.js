@@ -36,7 +36,7 @@ $(function(){
           $(".message").html("保存成功");
           notification("message", "提示",  "保存成功");
           clear();
-      })
+      });
   });
 
 
@@ -80,7 +80,6 @@ $(function(){
           $(".whos").html(jdata.find(".detail_list").html());
       });
     });
-
   });
 
   $(".back").click(function(){
@@ -92,6 +91,6 @@ $(function(){
     var ticker = setTimeout(function(){
           $(".message").html("");
           clearTimeout(ticker);
-    }, 5000)
+    }, 8000);
   }
 });

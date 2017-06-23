@@ -11,6 +11,7 @@ $(function(){
 
   chrome.alarms.onAlarm.addListener(function() {
       if(!isWeekDay()){
+          console.log("weekday");
           return;
       }
       getValue(["night_auto", "noon_auto"], function(result){
@@ -22,6 +23,6 @@ $(function(){
               noon();
           }
           offwork();
-      })
+      });
   });
 });

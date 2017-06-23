@@ -101,7 +101,7 @@ function noon2(callback, ggcallback){
    if(checkHour('09') || checkHour('9')){
      getValue(["success"], function(result){
         if(result.success != 1){
-          order2(2, function(username, o_type){
+          order2(1, function(username, o_type){
               notification("noon", "点餐提示", username + "：已为您点好午餐.");
           });
         } else {

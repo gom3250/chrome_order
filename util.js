@@ -120,6 +120,8 @@ function noon() {
                 });
             }
         });
+    } else {
+        resetSuccess();
     }
 }
 
@@ -127,7 +129,7 @@ function noon2() {
     if (checkHour('09') || checkHour('9')) {
         order2(1,
         function(username, o_type) {
-            notification("noon", "温馨提醒", username + "：已为您点好午餐.");
+            message("温馨提醒", username + "：已为您点好午餐.");
         });
         return;
     }
@@ -138,7 +140,7 @@ function night2() {
     if (checkHour('14') || checkHour('15')) {
         order2(2,
         function(username, o_type) {
-            notification("night", "点餐提示", username + "：已为您点好晚餐.");
+            message("温馨提醒", username + "：已为您点好晚餐.");
         });
     }
     message("温馨提醒", "抱歉,不在点餐时间");
@@ -159,7 +161,19 @@ function night() {
                 });
             }
         });
+    } else {
+        resetSuccess();
     }
+}
+
+function resetSuccess(){
+  getValue("success", function(result){
+      if(result.success == undefined || result.success != 0 ){
+        saveObject({
+            "success": 0
+        });
+      }
+  });
 }
 
 function offwork() {

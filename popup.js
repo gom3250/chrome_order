@@ -112,9 +112,10 @@ $(function() {
         night_time = $(".night_time").val();
         noon_auto = $(".noon_auto").prop("checked");
         night_auto = $(".night_auto").prop("checked");
-
+        password = $(".password").val();
         saveObject({
             "username": username,
+            "password": password,
             "bumen": bumen,
             "noon_auto": noon_auto,
             "night_auto": night_auto,

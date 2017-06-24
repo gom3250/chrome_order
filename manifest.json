@@ -2,15 +2,16 @@
   "manifest_version": 2,
 
   "name": "扬程点餐小助手",
-  "description": "这个扩展程序帮助您快速点餐.",
-  "version": "1.0.3",
+  "description": "有了扬程点餐小助手, 再也不用为点餐操心了。 ",
+  "version": "1.1.0",
 
   "permissions": [
     "notifications",
     "alarms",
     "storage",
     "cookies",
-    "*://dc.wk2.com/*"
+    "*://dc.wk2.com/*",
+    "*://oapi.dingtalk.com/*"
   ],
   "icons": {
        "16": "icon.png",

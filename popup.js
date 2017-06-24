@@ -1,6 +1,10 @@
 $(function() {
-    getValueByArray(["username", "bumen", "noon_auto", "night_auto", "noon_time", "night_time"],
+    getValueByArray(["password", "dingding_auto", "webhook", "link", "msg", "username", "bumen", "noon_auto", "night_auto", "noon_time", "night_time"],
     function(result) {
+        if (result.password != undefined) {
+            $(".password").val(result.password);
+        }
+
         if (result.username != undefined) {
             $(".username").val(result.username);
         }
@@ -28,6 +32,77 @@ $(function() {
         if (result.night_time != undefined) {
             $(".night_time").val(result.night_time);
         }
+
+        if (result.webhook != undefined) {
+            $(".webhook").val(result.webhook);
+        }
+
+        if (result.link != undefined) {
+            $(".link").val(result.link);
+        }
+
+        if (result.msg != undefined) {
+            $(".msg").val(result.msg);
+        }
+
+        if (result.dingding_auto != undefined) {
+            if (result.dingding_auto) {
+                $(".dingding_auto").prop("checked", "checked");
+            }
+        }
+
+    });
+
+    $(".test").click(function(){
+        password = $(".password").val();
+        username = $(".username").val();
+
+        saveObject({
+            "password": password,
+            "username": username
+        },
+        function() {
+            message("温馨提醒", "正在测试连接性...");
+            test();
+        });
+    });
+
+    $(".send").click(function(){
+        dingding_auto = $(".dingding_auto").val();
+        link = $(".link").val();
+        msg = $(".msg").val();
+        webhook = $(".webhook").val();
+
+        saveObject({
+            "link": link,
+            "msg": msg,
+            "webhook": webhook,
+            "dingding_auto": dingding_auto
+        },
+        function() {
+            message("温馨提醒", "正在发送...");
+            dingding2(0, function(){
+                message("温馨提醒", "发送成功");
+            });
+        });
+
+    });
+
+    $(".save2").click(function() {
+      dingding_auto = $(".dingding_auto").val();
+      link = $(".link").val();
+      msg = $(".msg").val();
+      webhook = $(".webhook").val();
+
+      saveObject({
+          "link": link,
+          "msg": msg,
+          "webhook": webhook,
+          "dingding_auto": dingding_auto
+      },
+      function() {
+          message("温馨提醒", "保存成功");
+      });
     });
 
     $(".save").click(function() {
@@ -85,8 +160,14 @@ $(function() {
         });
     });
 
+    $(".robin").click(function(){
+        $(".session").hide();
+        $(".session3").show();
+    });
+
     $(".back").click(function() {
         $(".session").show();
         $(".session2").hide();
+        $(".session3").hide();
     });
 });

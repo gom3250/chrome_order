@@ -1,5 +1,4 @@
 function login(username, password, callback) {
-    var cookieId = 'PHPSESSID';
     $.ajax({
         type: 'POST',
         url: "http://dc.wk2.com/Home/User/login.html",
@@ -9,45 +8,73 @@ function login(username, password, callback) {
         },
         crossDomain: true,
         success: function(data, status, xhr) {
-            chrome.cookies.get({
-                "url": "http://dc.wk2.com/Home/User/login.html",
-                "name": cookieId
-            },
-            function(cookie) {
-                var cookieStr = cookieId + "=" + cookie.value;
-                callback(cookieStr);
-            });
+            var jerror = $(data).find(".error");
+            if (jerror.size() > 0) {
+                callback(false);
+                return;
+            }
+            callback(true);
         },
         cache: false
     });
 }
 
-function view(username, successfn, showfn) {
-    var loginusername = "张凯";
-    var password = "123456";
-
-    login(loginusername, password,
-    function(cookieStr) {
-        $.ajax({
-            type: 'GET',
-            url: "http://dc.wk2.com/Home/Index/index.html",
-            crossDomain: true,
-            success: function(data, status, xhr) {
-                if (data.indexOf(username) != -1) {
-                    successfn(data);
+function test() {
+    getValueByArray(["password", "username"],
+    function(result) {
+        if (result.password && result.username) {
+            login(result.username, result.password,
+            function(islogin) {
+                if (islogin) {
+                    message("温馨提醒", "连接成功");
+                } else {
+                    message("温馨提醒", "连接失败");
                 }
-                if (showfn) {
-                    showfn(data);
-                }
-            },
-            // beforeSend: function(xhr){xhr.setRequestHeader('Cookie', cookieStr);},
-            cache: false
-        });
+            });
+        } else {
+            message("温馨提醒", "请先设置帐号密码");
+        }
     });
-
 }
 
-function order(username, bumen, o_type, cookieStr, successfn) {
+function view(username, successfn, showfn) {
+    getValueByArray(["password", "username"],
+    function(result) {
+        if (result.password && result.username) {
+            login(result.username, result.password,
+            function(islogin) {
+                if (!islogin) {
+                    message("温馨提醒", "登录失败, 请检查用户名密码是否设置正确");
+                    return;
+                }
+                $.ajax({
+                    type: 'GET',
+                    url: "http://dc.wk2.com/Home/Index/index.html",
+                    crossDomain: true,
+                    success: function(data, status, xhr) {
+                        if (data.indexOf(username) != -1) {
+                            if (successfn) {
+                                successfn(data);
+                            }
+                        }
+                        if (showfn) {
+                            showfn(data);
+                        }
+                    },
+                    cache: false
+                });
+            });
+        } else {
+            message("温馨提醒", "请先设置帐号密码");
+        }
+    });
+}
+
+function order(username, bumen, o_type, islogin, successfn, failfn) {
+    if(bumen == undefined || parseInt(bumen) == 0){
+        message("温馨提醒", "请先设置部门信息");
+        return;
+    }
     $.ajax({
         type: 'POST',
         url: "http://dc.wk2.com/Home/User/order.html",
@@ -58,31 +85,44 @@ function order(username, bumen, o_type, cookieStr, successfn) {
         },
         crossDomain: true,
         success: function(data, status, xhr) {
+            var jerror = $(data).find(".error");
+            if (jerror.size() > 0) {
+                if (failfn) {
+                    failfn(data);
+                }
+                return;
+            }
             view(username,
             function(data) {
                 saveObject({
                     "success": o_type
                 },
                 function() {
-                    successfn(username, o_type);
+                    if (successfn) {
+                        successfn(username, o_type);
+                    }
                 });
             });
         },
-        // beforeSend: function(xhr){xhr.setRequestHeader('Cookie', cookieStr);},
         cache: false
     });
 }
 
-function order2(o_type, successfn) {
-    var username = "张凯",
-    password = "123456";
-
-    login(username, password,
-    function(cookieStr) {
-        getValue(["username", "bumen"],
-        function(result) {
-            order(result.username, result.bumen, o_type, cookieStr, successfn);
-        });
+function order2(o_type, successfn, failfn) {
+    getValueByArray(["password", "username", "bumen"],
+    function(result) {
+        if (result.password && result.username) {
+            login(result.username, result.password,
+            function(islogin) {
+                if (!islogin) {
+                    message("温馨提醒", "登录失败, 请检查用户名密码是否设置正确");
+                    return;
+                }
+                order(result.username, result.bumen, o_type, islogin, successfn, failfn);
+            });
+        } else {
+            message("温馨提醒", "请先设置帐号密码");
+        }
     });
 }
 
@@ -106,6 +146,17 @@ function checkHour(hour) {
     return false;
 }
 
+function checkMinutes(minutes) {
+    var date = new Date();
+    var m = date.getMinutes();
+
+    if (parseInt(m) >= parseInt(minutes)) {
+        return true;
+    }
+
+    return false;
+}
+
 function noon() {
     console.log("auto noon run");
     if (checkHour('09') || checkHour('9')) {
@@ -120,8 +171,6 @@ function noon() {
                 });
             }
         });
-    } else {
-        resetSuccess();
     }
 }
 
@@ -130,6 +179,10 @@ function noon2() {
         order2(1,
         function(username, o_type) {
             message("温馨提醒", username + "：已为您点好午餐.");
+        },
+        function(data) {
+            var msg = $(data).find(".error").html();
+            message("温馨提醒", username + "：" + msg);
         });
         return;
     }
@@ -141,7 +194,12 @@ function night2() {
         order2(2,
         function(username, o_type) {
             message("温馨提醒", username + "：已为您点好晚餐.");
+        },
+        function(data) {
+            var msg = $(data).find(".error").html();
+            message("温馨提醒", msg);
         });
+        return;
     }
     message("温馨提醒", "抱歉,不在点餐时间");
 }
@@ -161,19 +219,7 @@ function night() {
                 });
             }
         });
-    } else {
-        resetSuccess();
     }
-}
-
-function resetSuccess(){
-  getValue("success", function(result){
-      if(result.success == undefined || result.success != 0 ){
-        saveObject({
-            "success": 0
-        });
-      }
-  });
 }
 
 function offwork() {
@@ -192,6 +238,115 @@ function offwork() {
         });
     }
     console.log("offwork run");
+}
+
+function dingding2(type, callback) {
+    getValueByArray(["dingding_auto", "webhook", "link", "msg"],
+    function(result) {
+        msg = "{ \"msgtype\": \"text\", \"text\": {\"content\": \"" + result.msg + "\n" + result.link + "\"}, \"at\": {\"isAtAll\": true}}";
+        $.ajax({
+            type: 'POST',
+            url: result.webhook,
+            crossDomain: true,
+            data: msg,
+            success: function(data, status, xhr) {
+                if (data.errcode == 0) {
+                    if (callback) {
+                        callback(type);
+                        message("温馨提醒", "发送成功");
+                    }
+                }
+            },
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('Content-Type', 'application/json');
+            },
+            cache: false
+        });
+    });
+}
+
+function dingding(type) {
+    dingding2(type,
+    function(type) {
+        saveObject({
+            "dingding_success": type
+        },
+        function() {});
+    });
+}
+
+function noon_ding() {
+    if (checkHour('09') || checkHour('9')) {
+        getValue("dingding_success",
+        function(result) {
+            if (result.dingding_success == undefined || result.dingding_success <= 1) {
+                dingding(1);
+            }
+        });
+    }
+    console.log("auto noon_ding run");
+}
+
+function noon_ding2() {
+    if (checkHour('09') || checkHour('9') && checkMinutes(30)) {
+        getValue("dingding_success",
+        function(result) {
+            if (result.dingding_success == undefined || result.dingding_success != 2) {
+                dingding(2);
+            }
+        });
+    }
+    console.log("auto noon_ding2 run");
+}
+
+function night_ding() {
+    if (checkHour('14') && checkMinutes(30)) {
+        getValue("dingding_success",
+        function(result) {
+            if (result.dingding_success == undefined || result.dingding_success != 3) {
+                dingding(3);
+            }
+        });
+    }
+    console.log("auto night_ding run");
+}
+
+function night_ding2() {
+    if (checkHour('15')) {
+        getValue("dingding_success",
+        function(result) {
+            if (result.dingding_success == undefined || result.dingding_success != 4) {
+                dingding(4);
+            }
+        });
+    }
+    console.log("auto night_ding2 run");
+}
+
+function resetSuccess() {
+    var date = new Date();
+    var h = date.getHours();
+
+    if (parseInt(h) < 9 || parseInt(h) > 16) {
+        getValue("dingding_success",
+        function(result) {
+            if (result.dingding_success == undefined || result.dingding_success != 0) {
+                saveObject({
+                    "dingding_success": 0
+                });
+            }
+        });
+
+        getValue("success",
+        function(result) {
+            if (result.success == undefined || result.success != 0) {
+                saveObject({
+                    "success": 0
+                });
+            }
+        });
+    }
+    console.log("auto reset success run");
 }
 
 function saveObject(obj, callback) {
@@ -219,6 +374,7 @@ function notification(id, title, message) {
 function clear() {
     var ticker = setTimeout(function() {
         $(".message").html("<div class=\"dc_notice\">" + "1、点餐时间，中餐 9:00-10:00， 晚餐14：00-15:30<br>" + "2、周六周日暂时不提供午晚餐<br>" + "3、取消点餐，请联系人事部<br>" + "4、好米、好油、好菜、好厨艺；乐厨让你吃饭无忧<br><br></div>");
+        $(".message2").html("<div class=\"dc_notice\">1、自动提醒时间为每天9点一次 9点半一次  下午2点半一次 3点一次<br>2、提醒时间可能有点偏差、不影响实际效果<br/></div>");
         clearTimeout(ticker);
     },
     8000);
@@ -226,6 +382,8 @@ function clear() {
 
 function message(title, msg) {
     $(".message").html(msg);
+    $(".message2").html(msg);
     clear();
+    var d = new Date();
     notification("message", title, msg);
 }

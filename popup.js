@@ -198,7 +198,7 @@ $(function() {
           tr = trs.eq(i);
           if (tr.html().indexOf(username) != -1) {
               tr.addClass("redBg");
-              html += "<div class='you'>❃您是第<strong>" + i + "</strong>个点餐的员工</div>";
+              html += "<div class='you'>❃共<strong>"+ (trs.size() - 1) +"</strong>人点餐，您是第<strong>" + i + "</strong>个。</div>";
               break;
           }
       }

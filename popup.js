@@ -143,38 +143,43 @@ $(function() {
             function(data) {
                 jdata = $(data);
                 trs = jdata.find(".detail_list tr");
-                var flag = false;
                 if(trs.size() <= 1){
                     getValueByArray("s_view", function(result){
-                        jdata = result.s_view;
-                        trs = jdata.find(".detail_list tr");
-                        if(trs.size() <= 1){
-                            flag = true;
+                        if(result.s_view == undefined){
                             message("温馨提醒", "抱歉, 暂时还没有人员点餐。");
                             return;
                         }
+                        jdata = $(result.s_view);
+                        trs = jdata.find(".detail_list tr");
+
+                        if(trs.size() <= 1){
+                            message("温馨提醒", "抱歉, 暂时还没有人员点餐。");
+                            return;
+                        }
+                        showMembers(jdata, trs, data);
                     });
-
-                    if(flag){
-                       return;
-                    }
+                } else{
+                   showMembers(jdata, trs, data);
                 }
-                saveObject({"s_view" : data}, function(){
-
-                });
-                $(".session").hide();
-                $(".session2").show();
-                for (var i = 0; i < trs.size(); i++) {
-                    tr = trs.eq(i);
-                    if (tr.html().indexOf(result.username) != -1) {
-                        tr.addClass("redBg");
-                        break;
-                    }
-                }
-                $(".whos").html(jdata.find(".detail_list").html());
             });
         });
     });
+
+    function showMembers(jdata, trs, data){
+      saveObject({"s_view" : data}, function(){
+
+      });
+      $(".session").hide();
+      $(".session2").show();
+      for (var i = 0; i < trs.size(); i++) {
+          tr = trs.eq(i);
+          if (tr.html().indexOf(result.username) != -1) {
+              tr.addClass("redBg");
+              break;
+          }
+      }
+      $(".whos").html(jdata.find(".detail_list").html());
+    }
 
     $(".robin").click(function(){
         $(".session").hide();

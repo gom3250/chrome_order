@@ -402,7 +402,7 @@ function notification(id, title, message) {
 
 function clear() {
     var ticker = setTimeout(function() {
-        $(".message").html("<div class=\"dc_notice\">" + "1、点餐时间，中餐 9:00-10:00， 晚餐14：00-15:30<br>" + "2、周六周日暂时不提供午晚餐<br>" + "3、取消点餐，请联系人事部<br>" + "4、好米、好油、好菜、好厨艺；乐厨让你吃饭无忧<br><br></div>");
+        $(".message").html("<div class=\"dc_notice\">" + "1、点餐时间，中餐 9:00-10:00， 晚餐14：00-15:30<br>" + "2、周六周日暂时不提供午晚餐<br>" + "3、取消点餐，请联系人事部<br>" + "4、好米、好油、好菜、好厨艺；乐厨让你吃饭无忧<br>5、勾选自动点餐后，将在星期一至星期五为您准时点餐。<br></div>");
         $(".message2").html("<div class=\"dc_notice\">1、自动提醒时间为每天9点一次 9点半一次  下午2点半一次 3点一次<br>2、提醒时间可能有点偏差、不影响实际效果<br/></div>");
         clearTimeout(ticker);
     },

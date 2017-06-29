@@ -1,4 +1,13 @@
 $(function() {
+
+    if(!checkHour('09') && !checkHour('09')){
+        $(".noon_hand").prop("disabled", true);
+    }
+
+    if(checkHour('14') && checkHour('15')){
+        $(".night_hand").prop("disabled", true);
+    }
+
     getValueByArray(["password", "dingding_auto", "webhook", "link", "msg", "username", "bumen", "noon_auto", "night_auto", "noon_time", "night_time"],
     function(result) {
         if (result.password != undefined) {
@@ -54,6 +63,7 @@ $(function() {
     });
 
     $(".test").click(function(){
+        scope = $(this);
         password = $(".password").val();
         username = $(".username").val();
 
@@ -62,8 +72,9 @@ $(function() {
             "username": username
         },
         function() {
+            scope.prop("disabled", true);
             message("温馨提醒", "正在测试连接性...");
-            test();
+            test(scope);
         });
     });
 
@@ -128,19 +139,29 @@ $(function() {
     });
 
     $(".noon_hand").click(function() {
-        noon2();
+        scope = $(this);
+        scope.prop("disabled", true);
+        message("温馨提醒", "请稍后,正在点午餐...");
+        noon2(scope);
     });
 
     $(".night_hand").click(function() {
-        night2();
+        scope = $(this);
+        scope.prop("disabled", true);
+        message("温馨提醒", "请稍后,正在点晚餐...");
+        night2(scope);
     });
 
     $(".view").click(function() {
+        scope = $(this);
+        scope.prop("disabled", true);
+        message("温馨提醒", "正在查询...");
         getValueByArray(["username"],
         function(result) {
             view(result.username,
             function() {},
             function(data) {
+                scope.prop("disabled", false);
                 jdata = $(data);
                 trs = jdata.find(".detail_list tr");
                 if(trs.size() <= 1){
@@ -156,29 +177,34 @@ $(function() {
                             message("温馨提醒", "抱歉, 暂时还没有人员点餐。");
                             return;
                         }
-                        showMembers(jdata, trs, data);
+                        showMembers(jdata, trs, data, result.username);
                     });
-                } else{
-                   showMembers(jdata, trs, data);
+                } else {
+                   showMembers(jdata, trs, data, result.username);
                 }
             });
         });
     });
 
-    function showMembers(jdata, trs, data){
+    function showMembers(jdata, trs, data, username){
+      message("温馨提醒", "查询成功");
       saveObject({"s_view" : data}, function(){
 
       });
       $(".session").hide();
       $(".session2").show();
+      var html = "";
       for (var i = 0; i < trs.size(); i++) {
           tr = trs.eq(i);
-          if (tr.html().indexOf(result.username) != -1) {
+          if (tr.html().indexOf(username) != -1) {
               tr.addClass("redBg");
+              html += "<div class='you'>❃您是第<strong>" + i + "</strong>个点餐的员工</div>";
               break;
           }
       }
-      $(".whos").html(jdata.find(".detail_list").html());
+
+      html += jdata.find(".detail_list").html();
+      $(".whos").html(html);
     }
 
     $(".robin").click(function(){

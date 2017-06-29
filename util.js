@@ -19,12 +19,13 @@ function login(username, password, callback) {
     });
 }
 
-function test() {
+function test(scope) {
     getValueByArray(["password", "username"],
     function(result) {
         if (result.password && result.username) {
             login(result.username, result.password,
             function(islogin) {
+                scope.prop("disabled", false);
                 if (islogin) {
                     message("温馨提醒", "连接成功");
                 } else {
@@ -32,6 +33,7 @@ function test() {
                 }
             });
         } else {
+            scope.prop("disabled", false);
             message("温馨提醒", "请先设置帐号密码");
         }
     });
@@ -174,34 +176,40 @@ function noon() {
     }
 }
 
-function noon2() {
+function noon2(scope) {
     if (checkHour('09') || checkHour('9')) {
         order2(1,
         function(username, o_type) {
             message("温馨提醒", username + "：已为您点好午餐.");
+            scope.prop("disabled", false);
         },
         function(data) {
             var msg = $(data).find(".error").html();
             message("温馨提醒",  msg);
+            scope.prop("disabled", false);
         });
         return;
     }
+    scope.prop("disabled", false);
     message("温馨提醒", "抱歉,不在点餐时间");
 }
 
-function night2() {
+function night2(scope) {
     if (checkHour('14') || checkHour('15')) {
         order2(2,
         function(username, o_type) {
             message("温馨提醒", username + "：已为您点好晚餐.");
+            scope.prop("disabled", false);
         },
         function(data) {
             var msg = $(data).find(".error").html();
             message("温馨提醒", msg);
+            scope.prop("disabled", false);
         });
         return;
     }
     message("温馨提醒", "抱歉,不在点餐时间");
+    scope.prop("disabled", false);
 }
 
 function night() {

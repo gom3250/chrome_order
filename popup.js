@@ -1,10 +1,10 @@
 $(function() {
 
-    if(!checkHour('09') && !checkHour('09')){
+    if(!checkHour(9)){
         $(".noon_hand").prop("disabled", true);
     }
 
-    if(checkHour('14') && checkHour('15')){
+    if(!checkHour(14) &&  !(checkHour(15) && checkMinutes2(30))){
         $(".night_hand").prop("disabled", true);
     }
 

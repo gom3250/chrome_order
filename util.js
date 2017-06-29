@@ -147,7 +147,7 @@ function checkHour(hour) {
     var date = new Date();
     var h = date.getHours();
 
-    if (hour == h) {
+    if (parseInt(hour) == parseInt(h)) {
         return true;
     }
 
@@ -165,9 +165,20 @@ function checkMinutes(minutes) {
     return false;
 }
 
+function checkMinutes2(minutes) {
+    var date = new Date();
+    var m = date.getMinutes();
+
+    if (parseInt(m) <= parseInt(minutes)) {
+        return true;
+    }
+
+    return false;
+}
+
 function noon() {
     console.log("auto noon run");
-    if (checkHour('09') || checkHour('9')) {
+    if (checkHour(9)) {
         getValue(["success", "noon_time"],
         function(result) {
             var date = new Date();
@@ -183,7 +194,7 @@ function noon() {
 }
 
 function noon2(scope) {
-    if (checkHour('09') || checkHour('9')) {
+    if (checkHour(9)) {
         order2(1,
         function(username, o_type) {
             message("温馨提醒", username + "：已为您点好午餐.");
@@ -201,7 +212,7 @@ function noon2(scope) {
 }
 
 function night2(scope) {
-    if (checkHour('14') || checkHour('15')) {
+    if (checkHour(14) || (checkHour(15) && checkMinutes2(30))) {
         order2(2,
         function(username, o_type) {
             message("温馨提醒", username + "：已为您点好晚餐.");
@@ -220,7 +231,7 @@ function night2(scope) {
 
 function night() {
     console.log("auto night run");
-    if (checkHour('14') || checkHour('15')) {
+    if (checkHour(14) || (checkHour(15) && checkMinutes2(30))) {
         getValue(["success", "night_time"],
         function(result) {
             var date = new Date();
@@ -237,7 +248,7 @@ function night() {
 }
 
 function offwork() {
-    if (checkHour('19')) {
+    if (checkHour(19)) {
         var date = new Date();
         var d = date.getDay();
         getValue("offwork",
@@ -302,7 +313,7 @@ function noon_ding() {
 }
 
 function noon_ding2() {
-    if (checkHour('09') || checkHour('9') && checkMinutes(30)) {
+    if (checkHour(9) && checkMinutes(30)) {
         getValue("dingding_success",
         function(result) {
             if (result.dingding_success == undefined || result.dingding_success != 2) {
@@ -314,7 +325,7 @@ function noon_ding2() {
 }
 
 function night_ding() {
-    if (checkHour('14') && checkMinutes(30)) {
+    if (checkHour(14) && checkMinutes(30)) {
         getValue("dingding_success",
         function(result) {
             if (result.dingding_success == undefined || result.dingding_success != 3) {
@@ -326,7 +337,7 @@ function night_ding() {
 }
 
 function night_ding2() {
-    if (checkHour('15')) {
+    if (checkHour(15)) {
         getValue("dingding_success",
         function(result) {
             if (result.dingding_success == undefined || result.dingding_success != 4) {

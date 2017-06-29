@@ -89,7 +89,7 @@ $(function() {
     });
 
     $(".save2").click(function() {
-      dingding_auto = $(".dingding_auto").val();
+      dingding_auto = $(".dingding_auto").prop("checked");
       link = $(".link").val();
       msg = $(".msg").val();
       webhook = $(".webhook").val();
@@ -143,10 +143,25 @@ $(function() {
             function(data) {
                 jdata = $(data);
                 trs = jdata.find(".detail_list tr");
+                var flag = false;
                 if(trs.size() <= 1){
-                    message("温馨提醒", "抱歉, 暂时还没有人员点餐。");
-                    return;
+                    getValueByArray("s_view", function(result){
+                        jdata = result.s_view;
+                        trs = jdata.find(".detail_list tr");
+                        if(trs.size() <= 1){
+                            flag = true;
+                            message("温馨提醒", "抱歉, 暂时还没有人员点餐。");
+                            return;
+                        }
+                    });
+
+                    if(flag){
+                       return;
+                    }
                 }
+                saveObject({"s_view" : data}, function(){
+
+                });
                 $(".session").hide();
                 $(".session2").show();
                 for (var i = 0; i < trs.size(); i++) {

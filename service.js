@@ -1,7 +1,4 @@
 $(function() {
-
-    saveObject({"dingding_auto": true}, function(){});
-
     getValue(["username", "bumen"],
     function(result) {
         if (result.username == "" || result.username == undefined || result.bumen == undefined || result.bumen == "0") {

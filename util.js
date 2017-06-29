@@ -182,7 +182,7 @@ function noon2() {
         },
         function(data) {
             var msg = $(data).find(".error").html();
-            message("温馨提醒", username + "：" + msg);
+            message("温馨提醒",  msg);
         });
         return;
     }
@@ -326,6 +326,10 @@ function night_ding2() {
 function resetSuccess() {
     var date = new Date();
     var h = date.getHours();
+
+    saveObject({"s_view" : ""}, function(){
+
+    });
 
     if (parseInt(h) < 9 || parseInt(h) > 16) {
         getValue("dingding_success",

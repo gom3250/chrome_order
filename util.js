@@ -72,9 +72,12 @@ function view(username, successfn, showfn) {
     });
 }
 
-function order(username, bumen, o_type, islogin, successfn, failfn) {
+function order(username, bumen, o_type, islogin, successfn, failfn, scope) {
     if(bumen == undefined || parseInt(bumen) == 0){
         message("温馨提醒", "请先设置部门信息");
+        if(scope){
+          scope.prop("disabled", false);
+        }
         return;
     }
     $.ajax({
@@ -110,7 +113,7 @@ function order(username, bumen, o_type, islogin, successfn, failfn) {
     });
 }
 
-function order2(o_type, successfn, failfn) {
+function order2(o_type, successfn, failfn, scope) {
     getValueByArray(["password", "username", "bumen"],
     function(result) {
         if (result.password && result.username) {
@@ -120,10 +123,13 @@ function order2(o_type, successfn, failfn) {
                     message("温馨提醒", "登录失败, 请检查用户名密码是否设置正确");
                     return;
                 }
-                order(result.username, result.bumen, o_type, islogin, successfn, failfn);
+                order(result.username, result.bumen, o_type, islogin, successfn, failfn, scope);
             });
         } else {
             message("温馨提醒", "请先设置帐号密码");
+            if(scope){
+              scope.prop("disabled", false);
+            }
         }
     });
 }
@@ -187,7 +193,7 @@ function noon2(scope) {
             var msg = $(data).find(".error").html();
             message("温馨提醒",  msg);
             scope.prop("disabled", false);
-        });
+        }, scope);
         return;
     }
     scope.prop("disabled", false);
@@ -205,7 +211,7 @@ function night2(scope) {
             var msg = $(data).find(".error").html();
             message("温馨提醒", msg);
             scope.prop("disabled", false);
-        });
+        }, scope);
         return;
     }
     message("温馨提醒", "抱歉,不在点餐时间");

@@ -182,7 +182,7 @@ $(function() {
                 } else {
                    showMembers(jdata, trs, data, result.username);
                 }
-            });
+            }, scope);
         });
     });
 
@@ -193,17 +193,33 @@ $(function() {
       });
       $(".session").hide();
       $(".session2").show();
-      var html = "";
+      var isOrder = false;
+      var html = "<div class='you'>❃共<strong>"+ (trs.size() - 1) +"</strong>人点餐";
       for (var i = 0; i < trs.size(); i++) {
           tr = trs.eq(i);
           if (tr.html().indexOf(username) != -1) {
               tr.addClass("redBg");
-              html += "<div class='you'>❃共<strong>"+ (trs.size() - 1) +"</strong>人点餐，您是第<strong>" + i + "</strong>个。</div>";
+              isOrder = true;
+              html += "，您是第<strong>" + i + "</strong>个。";
               break;
           }
       }
+      if(!isOrder){
+        var classStr = "";
+        if(checkHour(9)){
+            classStr = "noon_hand";
+        }
+
+        if(checkHour(14) ||  (checkHour(15) && checkMinutes2(30))){
+            classStr = "night_hand";
+        }
+        html += "，<strong>您还没有点餐</strong>。<input type='button' value='立即点餐' class='"+classStr+"'/><br/>";
+      }
+      html += "</div>";
+
 
       html += jdata.find(".detail_list").html();
+
       $(".whos").html(html);
     }
 

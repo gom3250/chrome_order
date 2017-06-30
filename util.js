@@ -39,7 +39,7 @@ function test(scope) {
     });
 }
 
-function view(username, successfn, showfn) {
+function view(username, successfn, showfn, scope) {
     getValueByArray(["password", "username"],
     function(result) {
         if (result.password && result.username) {
@@ -47,6 +47,9 @@ function view(username, successfn, showfn) {
             function(islogin) {
                 if (!islogin) {
                     message("温馨提醒", "登录失败, 请检查用户名密码是否设置正确");
+                    if(scope){
+                      scope.prop("disabled", false);
+                    }
                     return;
                 }
                 $.ajax({
@@ -68,6 +71,9 @@ function view(username, successfn, showfn) {
             });
         } else {
             message("温馨提醒", "请先设置帐号密码");
+            if(scope){
+              scope.prop("disabled", false);
+            }
         }
     });
 }

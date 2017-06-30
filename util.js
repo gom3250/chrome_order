@@ -352,11 +352,11 @@ function resetSuccess() {
     var date = new Date();
     var h = date.getHours();
 
-    saveObject({"s_view" : ""}, function(){
-
-    });
-
     if (parseInt(h) < 9 || parseInt(h) > 16) {
+        saveObject({"s_view" : ""}, function(){
+
+        });
+
         getValue("dingding_success",
         function(result) {
             if (result.dingding_success == undefined || result.dingding_success != 0) {

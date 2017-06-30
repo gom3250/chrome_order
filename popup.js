@@ -166,7 +166,7 @@ $(function() {
                 trs = jdata.find(".detail_list tr");
                 if(trs.size() <= 1){
                     getValueByArray("s_view", function(result){
-                        if(result.s_view == undefined){
+                        if(result.s_view == undefined || result.s_view == ""){
                             message("温馨提醒", "抱歉, 暂时还没有人员点餐。");
                             return;
                         }

@@ -141,6 +141,7 @@ $(function() {
     $(".noon_hand").click(function() {
         scope = $(this);
         scope.prop("disabled", true);
+        $(".back").click();
         message("温馨提醒", "请稍后,正在点午餐...");
         noon2(scope);
     });
@@ -148,6 +149,7 @@ $(function() {
     $(".night_hand").click(function() {
         scope = $(this);
         scope.prop("disabled", true);
+        $(".back").click();
         message("温馨提醒", "请稍后,正在点晚餐...");
         night2(scope);
     });
@@ -165,21 +167,22 @@ $(function() {
                 jdata = $(data);
                 trs = jdata.find(".detail_list tr");
                 if(trs.size() <= 1){
-                    getValueByArray("s_view", function(result){
-                        if(result.s_view == undefined || result.s_view == ""){
+                    getValueByArray("s_view", function(result2){
+                        if(result2.s_view == undefined || result2.s_view == ""){
                             message("温馨提醒", "抱歉, 暂时还没有人员点餐。");
                             return;
                         }
-                        jdata = $(result.s_view);
+                        jdata = $(result2.s_view);
                         trs = jdata.find(".detail_list tr");
 
                         if(trs.size() <= 1){
                             message("温馨提醒", "抱歉, 暂时还没有人员点餐。");
                             return;
                         }
-                        showMembers(jdata, trs, data, result.username);
+                        showMembers(jdata, trs, data, result2.username);
                     });
                 } else {
+                   saveObject({"s_view" : data}, function(){});
                    showMembers(jdata, trs, data, result.username);
                 }
             }, scope);
@@ -188,9 +191,6 @@ $(function() {
 
     function showMembers(jdata, trs, data, username){
       message("温馨提醒", "查询成功");
-      saveObject({"s_view" : data}, function(){
-
-      });
       $(".session").hide();
       $(".session2").show();
       var isOrder = false;
@@ -204,23 +204,23 @@ $(function() {
               break;
           }
       }
+      var classStr = "";
       if(!isOrder){
-        var classStr = "";
         if(checkHour(9)){
             classStr = "noon_hand";
         }
-
         if(checkHour(14) ||  (checkHour(15) && checkMinutes2(30))){
             classStr = "night_hand";
         }
         html += "，<strong>您还没有点餐</strong>。<input type='button' value='立即点餐' class='"+classStr+"'/><br/>";
       }
       html += "</div>";
-
-
       html += jdata.find(".detail_list").html();
-
       $(".whos").html(html);
+
+      if(!isOrder){
+          order3(classStr);
+      }
     }
 
     $(".robin").click(function(){
@@ -234,3 +234,27 @@ $(function() {
         $(".session3").hide();
     });
 });
+
+
+function order3(classStr){
+      if(classStr == 'noon_hand') {
+        $(".noon_hand").click(function() {
+            scope = $(this);
+            scope.prop("disabled", true);
+            $(".back").click();
+            message("温馨提醒", "请稍后,正在点午餐...");
+            noon2(scope);
+
+        });
+      }
+
+      if(classStr == 'night_hand') {
+        $(".night_hand").click(function() {
+            scope = $(this);
+            scope.prop("disabled", true);
+            message("温馨提醒", "请稍后,正在点晚餐...");
+            night2(scope);
+            $(".back").click();
+       });
+     }
+}
